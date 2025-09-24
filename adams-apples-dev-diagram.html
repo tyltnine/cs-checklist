@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adams Apples PWA - Development Timeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #718096;
+            font-size: 1.2em;
+        }
+        
+        .glossary-banner {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .glossary-banner h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .glossary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .glossary-item {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .glossary-term {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .glossary-def {
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            transform: translateX(-50%);
+        }
+        
+        .week-section {
+            position: relative;
+            margin-bottom: 60px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .week-section:nth-child(odd) .week-content {
+            margin-right: 52%;
+            text-align: right;
+        }
+        
+        .week-section:nth-child(even) .week-content {
+            margin-left: 52%;
+            text-align: left;
+        }
+        
+        .week-marker {
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 4px solid #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #667eea;
+            z-index: 2;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .week-marker.milestone {
+            width: 50px;
+            height: 50px;
+            background: #f6ad55;
+            border-color: #ed8936;
+            color: white;
+        }
+        
+        .week-content {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border: 2px solid #e2e8f0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .week-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        
+        .week-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+        
+        .week-epic {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .deliverables {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .deliverables h4 {
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .deliverable-item {
+            display: flex;
+            align-items: center;
+            margin: 6px 0;
+            color: #718096;
+        }
+        
+        .deliverable-item::before {
+            content: "✓";
+            margin-right: 8px;
+            color: #48bb78;
+            font-weight: bold;
+        }
+        
+        .reasoning {
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            color: #4a5568;
+            font-style: italic;
+        }
+        
+        .hours-badge {
+            display: inline-block;
+            background: #edf2f7;
+            color: #4a5568;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .tech-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            position: relative;
+            cursor: help;
+        }
+        
+        .tech-badge .tooltip {
+            visibility: hidden;
+            width: 200px;
+            background-color: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 11px;
+            line-height: 1.3;
+        }
+        
+        .tech-badge:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .milestone-banner {
+            background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 40px 0;
+            font-size: 1.1em;
+            font-weight: bold;
+            box-shadow: 0 4px 20px rgba(237, 137, 54, 0.3);
+        }
+        
+        .architecture-diagram {
+            margin: 40px 0;
+            padding: 30px;
+            background: #f7fafc;
+            border-radius: 12px;
+        }
+        
+        .architecture-title {
+            text-align: center;
+            font-size: 1.8em;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .architecture-subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .architecture-layers {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .layer {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .layer-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .layer-description {
+            font-size: 0.85em;
+            color: #718096;
+            text-align: center;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        .layer-items {
+            list-style: none;
+        }
+        
+        .layer-items li {
+            padding: 5px 0;
+            color: #4a5568;
+            font-size: 0.9em;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .week-section:nth-child(1) { animation-delay: 0.1s; }
+        .week-section:nth-child(2) { animation-delay: 0.2s; }
+        .week-section:nth-child(3) { animation-delay: 0.3s; }
+        .week-section:nth-child(4) { animation-delay: 0.4s; }
+        .week-section:nth-child(5) { animation-delay: 0.5s; }
+        .week-section:nth-child(6) { animation-delay: 0.6s; }
+        .week-section:nth-child(7) { animation-delay: 0.7s; }
+        .week-section:nth-child(8) { animation-delay: 0.8s; }
+        .week-section:nth-child(9) { animation-delay: 0.9s; }
+        .week-section:nth-child(10) { animation-delay: 1.0s; }
+        .week-section:nth-child(11) { animation-delay: 1.1s; }
+        .week-section:nth-child(12) { animation-delay: 1.2s; }
+        .week-section:nth-child(13) { animation-delay: 1.3s; }
+        
+        .plain-english {
+            background: #e6fffa;
+            border-left: 4px solid #38b2ac;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            color: #234e52;
+            font-size: 0.95em;
+        }
+        
+        .plain-english strong {
+            color: #38b2ac;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍎 Adams Apples Software Development Timeline</h1>
+            <p>A 13 Phase Journey to a Modern Orchard Management System & a Mobile-Friendly Web Application That Works Offline</p>
+            <p style="margin-top: 10px; color: #4a5568;">Total Required Time For All Components:  Hours</p>
+        </div>
+        
+        <div class="glossary-banner">
+            <h3>📚 Key Terms</h3>
+            <div class="glossary-grid">
+                <div class="glossary-item">
+                    <div class="glossary-term">PWA</div>
+                    <div class="glossary-def">Progressive Web App - A website that works like a phone app, even without internet</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">API</div>
+                    <div class="glossary-def">The "messenger" that lets different parts of the software talk to each other</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Database</div>
+                    <div class="glossary-def">The digital filing cabinet where all orcarhd related data is stored</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">CI/CD Pipeline</div>
+                    <div class="glossary-def">Automated quality checks that ensure code works before going live</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Backend</div>
+                    <div class="glossary-def">The "brain" of the application - it handles calculations and business logic</div>
+                </div>
+                <div class="glossary-item">
+                    <div class="glossary-term">Frontend</div>
+                    <div class="glossary-def">What users see and interact with - buttons, forms, maps, etc. - Designed to be intuitive.</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #667eea;"></div>
+                <span>Development Phase</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f6ad55;"></div>
+                <span>Major Milestone</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #48bb78;"></div>
+                <span>Deliverable You Can See/Test</span>
+            </div>
+        </div>
+        
+        <div class="architecture-diagram">
+            <h2 class="architecture-title">Application Structure</h2>
+            <p class="architecture-subtitle">Think of it like a restaurant: Frontend is the dining room, Backend is the kitchen, Database is the pantry, Infrastructure is the building</p>
+            <div class="architecture-layers">
+                <div class="layer">
+                    <div class="layer-title">User Interface Layer</div>
+                    <div class="layer-description">"What your team sees"</div>
+                    <ul class="layer-items">
+                        <li>• Mobile-friendly design</li>
+                        <li>• Works on phones & tablets</li>
+                        <li>• Functions without internet</li>
+                        <li>• Touch-friendly buttons</li>
+                        <li>• Auto-saves work locally</li>
+                    </ul>
+                </div>
+                <div class="layer">
+                    <div class="layer-title">Business Logic Layer</div>
+                    <div class="layer-description">"The brain that runs calculations"</div>
+                    <ul class="layer-items">
+                        <li>• Calculates labor costs</li>
+                        <li>• Tracks tree health</li>
+                        <li>• Generates invoices</li>
+                        <li>• Schedules work orders</li>
+                        <li>• Processes payments</li>
+                    </ul>
+                </div>
+                <div class="layer">
+                    <div class="layer-title">Data Storage Layer</div>
+                    <div class="layer-description">"Where everything is saved"</div>
+                    <ul class="layer-items">
+                        <li>• Tree locations & history</li>
+                        <li>• Client information</li>
+                        <li>• Photos & documents</li>
+                        <li>• Time tracking records</li>
+                        <li>• Financial data</li>
+                    </ul>
+                </div>
+                <div class="layer">
+                    <div class="layer-title">Infrastructure Layer</div>
+                    <div class="layer-description">"The foundation everything runs on"</div>
+                    <ul class="layer-items">
+                        <li>• Cloud hosting (like renting server space)</li>
+                        <li>• Automatic backups</li>
+                        <li>• Security monitoring</li>
+                        <li>• Performance tracking</li>
+                        <li>• Update deployment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="timeline">
+            <div class="timeline-line"></div>
+            
+            <!-- Week 1 -->
+            <div class="week-section">
+                <div class="week-marker">1</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 1: Building a Solid Foundation</div>
+                    <div class="week-epic">Setting Up Professional Development Environment</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Like laying the foundation for a house - we set up all the tools and systems that ensure your app is built properly from day one.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why First:</strong> Starting with proper tools and structure prevents problems later. Like using quality rootstock - it's harder to fix foundation issues after everything is built on top.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">Automated testing system running (quality control for code)</div>
+                        <div class="deliverable-item">Version control setup (tracks all changes to code necessary for a project of this scale)</div>
+                        <div class="deliverable-item">Basic database structure created, advanced features are added in a later phase but are necessary</div>
+                        <div class="deliverable-item">Server monitoring dashboard (shows tree health status)</div>
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Docker
+                            <span class="tooltip">Containers that package your app - like shipping containers for software</span>
+                        </span>
+                        <span class="tech-badge">Jenkins
+                            <span class="tooltip">Automated assistant that tests code before it goes live</span>
+                        </span>
+                        <span class="tech-badge">PostgreSQL
+                            <span class="tooltip">Professional database system for storing all your data</span>
+                        </span>
+                    </div>
+                    <div class="hours-badge">48 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 2 -->
+            <div class="week-section">
+                <div class="week-marker milestone">2</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 2: Creating Your Data Structure</div>
+                    <div class="week-epic">Building the Digital Filing System</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Setting up how all your orchard information will be organized and stored - think of this as creating a perfect filing system before you start filing documents.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Now:</strong> The database structure determines how efficiently your app runs. Getting it right now prevents slow performance and data problems later.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">Database with 130+ apple varieties pre-loaded</div>
+                        <div class="deliverable-item">Tree tracking system structure ready</div>
+                        <div class="deliverable-item">Photo storage system connected</div>
+                        <div class="deliverable-item">Fast data retrieval system (caching) working</div>
+                    </div>
+                    <div class="milestone-banner">
+                        🎯 MILESTONE: Your database is complete and ready to store all orchard data
+                    </div>
+                    <div class="hours-badge">45 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 3 -->
+            <div class="week-section">
+                <div class="week-marker">3</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 3: Building Business Logic</div>
+                    <div class="week-epic">Creating the "Brain" of Your Application</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Programming all the rules and calculations your business uses - like teaching the computer how to calculate spray schedules, labor costs, and tree spacing.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Now:</strong> These rules power everything users will do. Building them now lets us test thoroughly before adding the user interface. **We can look at simplifying the degree day value to spray occurence service and allow you to enter those manually instead of relying on the system's calculations, mostly to save time but also because we'll be using weather API's and not weather stations.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">Location management system (tracks orchards/blocks)</div>
+                        <div class="deliverable-item">Tree health tracking calculations working</div>
+                        <div class="deliverable-item">Weather data integration (pulls local weather automatically)</div>
+                        <div class="deliverable-item">API documentation (instruction manual for developers)</div>
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">REST APIs
+                            <span class="tooltip">Standard way for app parts to communicate - like a universal language</span>
+                        </span>
+                        <span class="tech-badge">Weather Integration
+                            <span class="tooltip">Automatically pulls weather data for spray timing and degree days</span>
+                        </span>
+                    </div>
+                    <div class="hours-badge">45 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 4 -->
+            <div class="week-section">
+                <div class="week-marker milestone">4</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 4: Security & User Access</div>
+                    <div class="week-epic">Protecting Your Data and Controlling Access</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Like installing locks, security cameras, and access cards for your building - ensuring only authorized people can see and change specific information.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Now:</strong> Security must be built in from the start, not added later. This protects client data, financial information, and gives different access levels to managers vs field workers.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">Secure login system with "remember me" option</div>
+                        <div class="deliverable-item">Different permission levels (admin, manager, worker)</div>
+                        <div class="deliverable-item">Protection against hackers and data breaches</div>
+                        <div class="deliverable-item">Password reset functionality</div>
+                    </div>
+                    <div class="milestone-banner">
+                        🎯 MILESTONE: Backend complete - All server systems operational and secure
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">JWT Auth
+                            <span class="tooltip">Secure "digital ID cards" that verify who's using the app</span>
+                        </span>
+                        <span class="tech-badge">Encryption
+                            <span class="tooltip">Scrambles data so only authorized users can read it</span>
+                        </span>
+                    </div>
+                    <div class="hours-badge">44 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 5 -->
+            <div class="week-section">
+                <div class="week-marker">5</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 5: Time Tracking That Works Offline</div>
+                    <div class="week-epic">Building Field-Ready Time Management</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Creating a time clock that works even in orchards with no cell service - saves everything locally and syncs when internet returns.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Now:</strong> Field workers need to track time accurately for payroll. This core feature must work perfectly before building other features on top of it.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">Time clock that works without internet</div>
+                        <div class="deliverable-item">Automatic syncing when connection returns</div>
+                        <div class="deliverable-item">Conflict resolution (handles multiple people editing same data)</div>
+                        <div class="deliverable-item">Device tracking (know which phone/tablet entered data)</div>
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Offline Storage
+                            <span class="tooltip">Saves data on the device until internet is available</span>
+                        </span>
+                        <span class="tech-badge">Sync Queue
+                            <span class="tooltip">Lines up changes to upload when connected</span>
+                        </span>
+                    </div>
+                    <div class="hours-badge">42 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 6 -->
+            <div class="week-section">
+                <div class="week-marker milestone">6</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 6: Building the User Interface Foundation</div>
+                    <div class="week-epic">Creating What Your Team Will See and Touch</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Starting to build the screens, buttons, and forms your team will actually use--This is the second opportunity to cut time by using a simple design that still flows well for the users--making it work smoothly on phones, tablets, and computers.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Now:</strong> With the backend "brain" complete, I can now build the visual interface that connects to it. The foundation ensures everything looks good on any device.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">App installable on phones (add to home screen)</div>
+                        <div class="deliverable-item">Basic navigation between screens</div>
+                        <div class="deliverable-item">Offline mode indicator</div>
+                        <div class="deliverable-item">Responsive design (adapts to screen size)</div>
+                    </div>
+                    <div class="milestone-banner">
+                        🎯 MILESTONE: Progressive Web App foundation complete - Works offline!
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Angular
+                            <span class="tooltip">Google's framework for building interactive web apps</span>
+                        </span>
+                        <span class="tech-badge">Service Workers
+                            <span class="tooltip">Background helpers that make offline mode possible</span>
+                        </span>
+                    </div>
+                    <div class="hours-badge">46 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 7 -->
+            <div class="week-section">
+                <div class="week-marker">7</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 7: Main Dashboard & Core Screens</div>
+                    <div class="week-epic">Building the Daily-Use Interface</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Creating the main screens your team will use every day - dashboard showing today's tasks, tree management screens, and weather information.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Now:</strong> Users need intuitive screens to interact with all the backend functionality we've built. Good design here reduces training time. Deliverable 4 can be redced to save time.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">Main dashboard with today's priorities</div>
+                        <div class="deliverable-item">Tree management screen with search</div>
+                        <div class="deliverable-item">Apple variety browser (all 130+ varieties)</div>
+                        <div class="deliverable-item">Weather widget with spray timing info</div>
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Material Design
+                            <span class="tooltip">Google's design system - familiar buttons and layouts users already know</span>
+                        </span>
+                    </div>
+                    <div class="hours-badge">39 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 8 -->
+            <div class="week-section">
+                <div class="week-marker milestone">8</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 8: Visual Orchard Management</div>
+                    <div class="week-epic">Interactive Maps and Grid Views</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Creating visual tools to see your entire orchard at a glance - clickable maps, tree grids showing health status, and visual planning tools.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Now:</strong> Visual management is what makes this system powerful. Seeing problems on a map is faster than reading reports.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">Interactive orchard maps (zoom, click trees)</div>
+                        <div class="deliverable-item">Grid view showing every tree's status</div>
+                        <div class="deliverable-item">Color coding for tree health/age</div>
+                        <div class="deliverable-item">Nursery inventory tracker</div>
+                    </div>
+                    <div class="milestone-banner">
+                        🎯 MILESTONE: Core orchard features complete - Full visual management ready
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Leaflet Maps
+                            <span class="tooltip">Interactive maps like Google Maps but for your orchards</span>
+                        </span>
+                    </div>
+                    <div class="hours-badge">60 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 9 -->
+            <div class="week-section">
+                <div class="week-marker">9</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 9: Work Order Management</div>
+                    <div class="week-epic">Organizing and Tracking Daily Tasks</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Building a smart to-do list system for your crews - assigns tasks, tracks progress, records materials used, and captures photos of completed work.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Now:</strong> Work orders drive your daily operations. This system replaces paper forms and ensures nothing falls through the cracks.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">Create work orders with a few taps</div>
+                        <div class="deliverable-item">Mobile-friendly task list for workers</div>
+                        <div class="deliverable-item">Calendar view of scheduled work</div>
+                        <div class="deliverable-item">Before/after photo attachments</div>
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Camera Integration
+                            <span class="tooltip">Take photos directly in the app for documentation</span>
+                        </span>
+                    </div>
+                    <div class="hours-badge">55 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 10 -->
+            <div class="week-section">
+                <div class="week-marker milestone">10</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 10: Client Relationship Tools</div>
+                    <div class="week-epic">Client Portal and Management System</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Creating a special area where clients can log in to see their orchards, request work, view proposals, and track progress - like giving them a window into their account.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Now:</strong> We want happy clients. Transparency through a client portal reduces phone calls and builds trust.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">Client login portal (separate from your admin area)</div>
+                        <div class="deliverable-item">Clients can view their orchard status</div>
+                        <div class="deliverable-item">Online work request forms</div>
+                        <div class="deliverable-item">Proposal and contract management</div>
+                    </div>
+                    <div class="milestone-banner">
+                        🎯 MILESTONE: Client portal complete - Customers can access their information
+                    </div>
+                    <div class="hours-badge">40 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 11 -->
+            <div class="week-section">
+                <div class="week-marker milestone">11</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 11: Invoicing & Payment System</div>
+                    <div class="week-epic">Automated Billing and Online Payments</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Building a system that automatically creates invoices from completed work, emails them to clients, and lets clients pay online with credit cards.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Now:</strong> Getting paid faster improves cash flow. Automated invoicing saves hours of administrative work each week.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">One-click invoice generation from work orders</div>
+                        <div class="deliverable-item">Online payment portal (credit cards accepted)</div>
+                        <div class="deliverable-item">Professional PDF invoices</div>
+                        <div class="deliverable-item">Automatic payment reminders</div>
+                    </div>
+                    <div class="milestone-banner">
+                        🎯 MILESTONE: Billing system complete - Can invoice and collect payments
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Stripe
+                            <span class="tooltip">Secure credit card processing (same as Amazon uses)</span>
+                        </span>
+                    </div>
+                    <div class="hours-badge">47 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 12 -->
+            <div class="week-section">
+                <div class="week-marker">12</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 12: Analytics & Insights</div>
+                    <div class="week-epic">Data-Driven Decision Making Tools</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Creating reports and charts that show you where you're making money, which clients are most profitable, labor efficiency, and harvest predictions.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Now:</strong> With all data flowing through the system, we can now build insights that help you make better business decisions.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">Labor cost analysis (see where time is spent)</div>
+                        <div class="deliverable-item">Harvest prediction charts</div>
+                        <div class="deliverable-item">Client profitability reports</div>
+                        <div class="deliverable-item">Export data to Excel</div>
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Chart.js
+                            <span class="tooltip">Creates visual graphs and charts from your data</span>
+                        </span>
+                    </div>
+                    <div class="hours-badge">55 hours</div>
+                </div>
+            </div>
+            
+            <!-- Week 13 -->
+            <div class="week-section">
+                <div class="week-marker milestone">13</div>
+                <div class="week-content">
+                    <div class="week-title">Phase 13: Testing, Training & Launch</div>
+                    <div class="week-epic">Making Sure Everything Works Perfectly</div>
+                    <div class="plain-english">
+                        <strong>Simply put:</strong> Like test-driving a new tractor - we thoroughly test every feature, fix any issues, train your team, and launch your new system.
+                    </div>
+                    <div class="reasoning">
+                        <strong>Why Last:</strong> Comprehensive testing with real scenarios ensures a smooth launch. Your team gets trained on the complete, polished system.
+                    </div>
+                    <div class="deliverables">
+                        <h4>Deliverables</h4>
+                        <div class="deliverable-item">Complete system testing with your data</div>
+                        <div class="deliverable-item">Performance optimization (make it fast)</div>
+                        <div class="deliverable-item">Team training sessions</div>
+                        <div class="deliverable-item">User manual and video guides</div>
+                        <div class="deliverable-item">System goes live on the cloud!</div>
+                    </div>
+                    <div class="milestone-banner">
+                        🚀 MILESTONE: SYSTEM LAUNCH - Your orchard management system is live!
+                    </div>
+                    <div class="tech-stack">
+                        <span class="tech-badge">AWS
+                            <span class="tooltip">Amazon's cloud servers - reliable hosting for your app</span>
+                        </span>
+                    </div>
+                    <div class="hours-badge">50 hours</div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 30px; background: linear-gradient(135deg, hsl(145, 46%, 51%) 0%, #38a169 100%); border-radius: 12px; color: white;">
+            <h2 style="text-align: center; margin-bottom: 20px;">What Does Success Looks Like?</h2>
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2em; font-weight: bold;">100%</div>
+                    <div>Accurate Tree Tracking</div>
+                    <div style="font-size: 0.8em; opacity: 0.9;">Never lose track of a tree again, see health status of trees</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2em; font-weight: bold;">2 seconds</div>
+                    <div>To Create an Invoice</div>
+                    <div style="font-size: 0.8em; opacity: 0.9;">From work order to automatically sent invoice</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2em; font-weight: bold;">Works Offline</div>
+                    <div>In Any Orchard</div>
+                    <div style="font-size: 0.8em; opacity: 0.9;">No cell service? No problem. Local storage used to save data until internet access is regained.</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2em; font-weight: bold;">One System</div>
+                    <div>For Everything</div>
+                    <div style="font-size: 0.8em; opacity: 0.9;">No more spreadsheets & paper, one clean cut method of handling all of your orchard related clients, jobs, and data. Track nursery data and plant sales, as well. </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f7fafc; border-radius: 12px;">
+            <h3 style="color: #2d3748; margin-bottom: 15px;">Expected Business Impact</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <div style="padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #667eea;">
+                    <strong style="color: #667eea;">Save 10+ Hours Weekly, bill clients promptly and accurately</strong>
+                    <p style="margin-top: 8px; color: #4a5568; font-size: 0.9em;">Automated invoicing, work orders, and time tracking eliminate paperwork</p>
+                </div>
+                <div style="padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #48bb78;">
+                    <strong style="color: #48bb78;">Get Paid ~30% Faster</strong>
+                    <p style="margin-top: 8px; color: #4a5568; font-size: 0.9em;">Online payments* and automatic reminders improve cash flow immediately</p>
+                </div>
+                <div style="padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #f6ad55;">
+                    <strong style="color: #f6ad55;">Happier Clients</strong>
+                    <p style="margin-top: 8px; color: #4a5568; font-size: 0.9em;">24/7 access to their orchard information to reduces calls and build trust</p>
+                </div>
+                <div style="padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #9f7aea;">
+                    <strong style="color: #9f7aea;">Make Better Decisions</strong>
+                    <p style="margin-top: 8px; color: #4a5568; font-size: 0.9em;">See exactly where you make money and where you can improve efficiency</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #fef5e7; border: 2px solid #f39c12; border-radius: 12px;">
+            <h3 style="color: #d68910; margin-bottom: 10px;">📞 Communication During Development</h3>
+            <p style="color: #7d6608;">
+                • <strong>Weekly Updates:</strong> Every Friday, you'll receive a progress report showing what was completed<br>
+                • <strong>Demo Sessions:</strong> At each milestone, I'll show you the working features<br>
+                • <strong>Your Feedback:</strong> You can request adjustments at any milestone<br>
+                • <strong>Testing Access:</strong> Starting Phase 6, you can test features as they're built
+            </p>
+        </div>
+    </div>
+</body>
+</html>
